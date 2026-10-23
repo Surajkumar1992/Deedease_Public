@@ -7,6 +7,8 @@
   var WEB3FORMS_ACCESS_KEY = 'edfe1f31-c9ff-4769-b61b-5213a82e9f20';
   var FORM_ENDPOINT = 'https://api.web3forms.com/submit';
   var CONTACT_EMAIL = 'info@deedease.com';
+  // Bump together with the "Last updated" date in privacy.html.
+  var PRIVACY_POLICY_VERSION = '2026-10-23';
 
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   var LABELS = {
@@ -71,7 +73,10 @@
       botcheck: false
     };
     Object.keys(f).forEach(function (k) { data[LABELS[k] || k] = f[k]; });
-    if (type === 'lead') data['Consent to contact'] = 'Yes';
+    data['Consent'] = 'Yes: ' + (type === 'waitlist'
+      ? 'clicked "Join the early-access waitlist"'
+      : 'ticked early-access consent box') + ' (Privacy Policy ' + PRIVACY_POLICY_VERSION + ')';
+    data['Consent given at'] = new Date().toISOString();
     return data;
   }
 

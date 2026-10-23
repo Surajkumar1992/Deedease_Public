@@ -66,7 +66,11 @@
           </button>
           <p class="form-status" role="status" aria-live="polite"></p>
         </form>
-        <p class="hero-note">No spam. We'll only email you about launch &amp; early access.</p>
+        <p class="hero-note">
+          By joining the waitlist, you consent to Deedease using your email only to send launch &amp;
+          early-access updates. No spam &middot; unsubscribe anytime &middot;
+          <a href="privacy.html">Privacy Policy</a>
+        </p>
       </div>
 
       <!-- Trust Score teaser card -->
@@ -169,11 +173,11 @@
         </div>
         <div class="field-row">
           <div class="field">
-            <label class="label" for="lead-phone">Phone</label>
+            <label class="label" for="lead-phone">Phone <span class="opt">(optional)</span></label>
             <input class="input" id="lead-phone" name="phone" type="tel" autocomplete="tel" placeholder="+91" />
           </div>
           <div class="field">
-            <label class="label" for="lead-city">City</label>
+            <label class="label" for="lead-city">City <span class="opt">(optional)</span></label>
             <input class="input" id="lead-city" name="city" type="text" autocomplete="address-level2" />
           </div>
         </div>
@@ -200,16 +204,20 @@
           </div>
         </div>
         <div class="field">
-          <label class="label" for="lead-company">Company / organisation</label>
+          <label class="label" for="lead-company">Company / organisation <span class="opt">(optional)</span></label>
           <input class="input" id="lead-company" name="company" type="text" autocomplete="organization" />
         </div>
         <div class="field">
-          <label class="label" for="lead-message">What would you like to verify?</label>
+          <label class="label" for="lead-message">What would you like to verify? <span class="opt">(optional)</span></label>
           <textarea class="input" id="lead-message" name="message" rows="3" placeholder="e.g. Buying a flat in Bengaluru, need title & EC checks"></textarea>
         </div>
         <label class="consent">
           <input type="checkbox" name="consent" value="yes" required />
-          <span>I agree to be contacted by Deedease about early access.</span>
+          <span>
+            I consent to Deedease using the details above only to contact me about early access
+            and the pilot program, as described in the <a href="privacy.html">Privacy Policy</a>.
+            I can withdraw consent anytime by emailing info@deedease.com.
+          </span>
         </label>
         <input type="text" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button type="submit" class="btn btn-primary btn-lg btn-block">Request early access</button>
@@ -233,6 +241,11 @@
   <footer class="footer">
     <p>&copy; <span id="year">2026</span> Deedease. All rights reserved.</p>
     <p>The CarFax for Real Estate &middot; Launching 2027</p>
+    <p class="footer-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <span aria-hidden="true">&middot;</span>
+      <a href="mailto:info@deedease.com">info@deedease.com</a>
+    </p>
   </footer>
 
   <script src="main.js" defer></script>

@@ -1,6 +1,8 @@
 # Deedease — Coming Soon landing page
 
-Static, dependency-free page (`index.html`, `styles.css`, `main.js`, `logo.svg`) served by **GitHub Pages** from the root of `master`, on the GoDaddy domain **deedease.com**.
+Static, dependency-free page (`index.html`, `privacy.html`, `styles.css`, `main.js`, `logo.svg`) served by **GitHub Pages** from the root of `master`, on the GoDaddy domain **deedease.com**.
+
+**Privacy (India DPDP Act 2023):** both forms show a consent notice linking to [`privacy.html`](./privacy.html), the footer links to it on every page, and each submission email records which consent was given, when, and the policy version. When you edit the policy, update its "Last updated" date and `PRIVACY_POLICY_VERSION` in `main.js`.
 
 ## 1. Enable GitHub Pages
 
