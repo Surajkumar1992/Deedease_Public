@@ -1,22 +1,34 @@
 (function () {
   'use strict';
 
-  // Static-site form backend (GitHub Pages has no server).
-  // FormSubmit forwards submissions to this inbox; the first submission triggers
-  // a one-time activation email to info@deedease.com. To switch providers
-  // (e.g. Formspree: https://formspree.io/f/<id>), change this URL only.
-  var FORM_ENDPOINT = 'https://formsubmit.co/ajax/info@deedease.com';
+  // Static-site form backend (GitHub Pages has no server): Web3Forms.
+  // Get a free access key at https://web3forms.com (enter info@deedease.com),
+  // then paste it below. Submissions are emailed to that inbox.
+  var WEB3FORMS_ACCESS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY';
+  var FORM_ENDPOINT = 'https://api.web3forms.com/submit';
+  var CONTACT_EMAIL = 'info@deedease.com';
 
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  var LABELS = {
+    name: 'Name', email: 'Email', phone: 'Phone', city: 'City', role: 'Role',
+    interest: 'Interested in', company: 'Company', message: 'Message'
+  };
 
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  function setStatus(form, text, kind) {
+  function setStatus(form, text, kind, mailto) {
     var el = form.querySelector('.form-status');
     if (!el) return;
     el.textContent = text;
     el.className = 'form-status' + (kind ? ' ' + kind : '');
+    if (mailto) {
+      el.appendChild(document.createTextNode(' '));
+      var a = document.createElement('a');
+      a.href = mailto;
+      a.textContent = 'Send by email instead';
+      el.appendChild(a);
+    }
   }
 
   function validate(form) {
@@ -32,18 +44,43 @@
     return !firstInvalid;
   }
 
-  function collect(form, type) {
-    var data = { form_type: type, page: location.href, submitted_at: new Date().toISOString() };
+  function readFields(form) {
+    var fields = {};
     new FormData(form).forEach(function (value, key) {
-      data[key] = typeof value === 'string' ? value.trim() : value;
+      if (key === 'botcheck' || key === 'consent') return;
+      if (typeof value === 'string' && value.trim()) fields[key] = value.trim();
     });
-    data._subject = type === 'waitlist'
-      ? 'Deedease waitlist signup: ' + data.email
-      : 'Deedease ' + (data.interest || 'early access') + ' lead: ' + (data.name || data.email);
-    data._template = 'table';
-    data._captcha = 'false';
-    if (data.email) data._replyto = data.email;
+    return fields;
+  }
+
+  function subjectFor(type, f) {
+    return type === 'waitlist'
+      ? 'Deedease waitlist signup: ' + f.email
+      : 'Deedease ' + (f.interest || 'early access') + ' lead: ' + (f.name || f.email);
+  }
+
+  function buildPayload(form, type) {
+    var f = readFields(form);
+    var data = {
+      access_key: WEB3FORMS_ACCESS_KEY,
+      subject: subjectFor(type, f),
+      from_name: 'Deedease Website',
+      replyto: f.email,
+      form_type: type === 'waitlist' ? 'Waitlist' : 'Early access / pilot lead',
+      page: location.href,
+      botcheck: false
+    };
+    Object.keys(f).forEach(function (k) { data[LABELS[k] || k] = f[k]; });
+    if (type === 'lead') data['Consent to contact'] = 'Yes';
     return data;
+  }
+
+  function mailtoFor(form, type) {
+    var f = readFields(form);
+    var body = Object.keys(f).map(function (k) { return (LABELS[k] || k) + ': ' + f[k]; }).join('\n');
+    return 'mailto:' + CONTACT_EMAIL +
+      '?subject=' + encodeURIComponent(subjectFor(type, f)) +
+      '&body=' + encodeURIComponent(body);
   }
 
   function handleSubmit(event) {
@@ -51,11 +88,16 @@
     var form = event.currentTarget;
     var type = form.getAttribute('data-form');
 
-    var honey = form.querySelector('input[name="_honey"]');
+    var honey = form.querySelector('input[name="botcheck"]');
     if (honey && honey.value) return;
 
     if (!validate(form)) {
       setStatus(form, 'Please fill in the required fields with valid details.', 'err');
+      return;
+    }
+
+    if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY.indexOf('YOUR_') === 0) {
+      setStatus(form, 'Online sign-up is being set up.', 'err', mailtoFor(form, type));
       return;
     }
 
@@ -68,12 +110,12 @@
     fetch(FORM_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(collect(form, type))
+      body: JSON.stringify(buildPayload(form, type))
     })
       .then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (body) {
-          if (!res.ok || String(body.success) === 'false') {
-            throw new Error(body.message || 'Request failed');
+          if (!res.ok || body.success !== true) {
+            throw new Error(body.message || ('HTTP ' + res.status));
           }
         });
       })
@@ -87,12 +129,9 @@
           'ok'
         );
       })
-      .catch(function () {
-        setStatus(
-          form,
-          'Something went wrong. Please try again or email info@deedease.com.',
-          'err'
-        );
+      .catch(function (err) {
+        if (window.console) console.error('Form submission failed:', err);
+        setStatus(form, "We couldn't submit the form right now.", 'err', mailtoFor(form, type));
       })
       .finally(function () {
         button.disabled = false;

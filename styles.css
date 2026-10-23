@@ -219,6 +219,7 @@ textarea.input { resize: vertical; }
 
 .form-status { font-size: .875rem; min-height: 1.25rem; }
 .form-status:empty { display: none; }
+.form-status a { color: inherit; font-weight: 600; text-decoration: underline; }
 .form-status.ok { color: #15803d; }
 .form-status.err { color: var(--red-600); }
 .hero .form-status.ok { color: var(--green-400); }

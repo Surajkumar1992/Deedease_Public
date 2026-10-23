@@ -31,13 +31,15 @@ Optional (recommended): verify the domain under GitHub → **Settings (profile) 
 
 ## 3. Lead / waitlist forms
 
-Both forms POST to [FormSubmit](https://formsubmit.co) (`FORM_ENDPOINT` in [`main.js`](./main.js)), which emails each lead to **info@deedease.com**.
+Both forms POST to [Web3Forms](https://web3forms.com), which emails each lead to **info@deedease.com**.
 
-- **First submission** sends a one-time *activation* email to info@deedease.com — click *Activate* and all later submissions are delivered.
-- After activation, FormSubmit emails a random alias string; you can replace the email in `FORM_ENDPOINT` with it to hide the address from the source.
-- To use Formspree/Getform/etc. instead, change only `FORM_ENDPOINT`.
+1. Go to <https://web3forms.com>, enter `info@deedease.com` → **Create Access Key**. The key is emailed to that inbox.
+2. Paste it into `WEB3FORMS_ACCESS_KEY` at the top of [`main.js`](./main.js), then commit & push.
+3. (Optional) In the Web3Forms dashboard, restrict the key to `deedease.com` so it can't be reused elsewhere. The access key is designed to be public.
 
-Each submission includes `form_type` (`waitlist` or `lead`), plus name, email, phone, city, role, interest (Early access / Pilot partner), company and message for leads.
+Until a key is set, or if a submission fails, users see a **"Send by email instead"** link that opens a pre-filled email to info@deedease.com, so no lead is lost. Failures are logged in the browser console with the server's message.
+
+Each email includes the form type (Waitlist / Early access / pilot lead), the page URL, and for leads: name, email, phone, city, role, interest (Early access / Pilot partner), company and message. Reply-to is set to the submitter's email.
 
 ## Local preview
 
