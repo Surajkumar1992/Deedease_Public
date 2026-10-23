@@ -4,7 +4,7 @@
   // Static-site form backend (GitHub Pages has no server): Web3Forms.
   // Get a free access key at https://web3forms.com (enter info@deedease.com),
   // then paste it below. Submissions are emailed to that inbox.
-  var WEB3FORMS_ACCESS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY';
+  var WEB3FORMS_ACCESS_KEY = 'edfe1f31-c9ff-4769-b61b-5213a82e9f20';
   var FORM_ENDPOINT = 'https://api.web3forms.com/submit';
   var CONTACT_EMAIL = 'info@deedease.com';
 
