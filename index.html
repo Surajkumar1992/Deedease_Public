@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#4b5bc4" />
+  <meta name="theme-color" content="#0f2d5a" />
   <title>Deedease — The CarFax for Real Estate | Launching Soon</title>
   <meta name="description" content="Deedease is the CarFax for Real Estate — verify ownership, legal title, litigation and records with a Property Trust Score on every property. Join the early-access waitlist." />
   <link rel="canonical" href="https://deedease.com/" />
@@ -41,6 +41,19 @@
   <!-- Hero -->
   <header class="hero">
     <div class="hero-overlay"></div>
+    <svg class="hero-net" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <g class="net-lines">
+        <path d="M60 80 L220 160 L380 70 L540 170 L720 90"/>
+        <path d="M120 320 L260 240 L420 300 L580 230 L740 320"/>
+        <path d="M220 160 L260 240 M380 70 L420 300 M540 170 L580 230"/>
+      </g>
+      <g class="net-nodes">
+        <circle cx="60" cy="80" r="4"/><circle cx="220" cy="160" r="5"/><circle cx="380" cy="70" r="4"/>
+        <circle cx="540" cy="170" r="5"/><circle cx="720" cy="90" r="4"/><circle cx="120" cy="320" r="4"/>
+        <circle cx="260" cy="240" r="5"/><circle cx="420" cy="300" r="4"/><circle cx="580" cy="230" r="5"/>
+        <circle cx="740" cy="320" r="4"/>
+      </g>
+    </svg>
     <div class="container hero-grid">
       <div>
         <div class="pill">
@@ -75,6 +88,7 @@
 
       <!-- Trust Score teaser card -->
       <div class="score-card" aria-label="Property Trust Score preview">
+        <span class="scan-line" aria-hidden="true"></span>
         <div class="score-head">
           <div>
             <p class="score-label">Property Trust Score</p>
@@ -102,6 +116,42 @@
       <div><p class="strip-value">1</p><p class="strip-label">Simple Trust Score</p></div>
       <div><p class="strip-value">2027</p><p class="strip-label">Public launch</p></div>
       <div><p class="strip-value">Pilot</p><p class="strip-label">Partners onboarding now</p></div>
+    </div>
+  </section>
+
+  <!-- How AI verification works -->
+  <section id="how" class="section" aria-labelledby="how-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="how-heading">From documents to a Trust Score</h2>
+        <p>AI reads the paperwork, cross-checks official records, and turns it into one clear score.</p>
+      </div>
+      <ol class="flow">
+        <li class="flow-step reveal">
+          <div class="flow-visual" aria-hidden="true">
+            <svg viewBox="0 0 64 64"><rect x="14" y="8" width="36" height="48" rx="4"/><path d="M22 22h20M22 31h20M22 40h12"/></svg>
+            <span class="flow-scan"></span>
+          </div>
+          <h3>1. Documents in</h3>
+          <p>Title deeds, tax receipts and encumbrance certificates are collected for the property.</p>
+        </li>
+        <li class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></li>
+        <li class="flow-step reveal">
+          <div class="flow-visual" aria-hidden="true">
+            <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="8"/><circle cx="12" cy="14" r="4"/><circle cx="52" cy="14" r="4"/><circle cx="12" cy="50" r="4"/><circle cx="52" cy="50" r="4"/><path d="M15 17l11 10M49 17L38 27M15 47l11-10M49 47L38 37"/></svg>
+          </div>
+          <h3>2. AI cross-checks</h3>
+          <p>AI flags mismatches and checks ownership, litigation and government records.</p>
+        </li>
+        <li class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></li>
+        <li class="flow-step reveal">
+          <div class="flow-visual" aria-hidden="true">
+            <svg viewBox="0 0 64 64"><path d="M32 6 52 14v16c0 13-9 22-20 28C21 52 12 43 12 30V14z"/><path d="m23 32 7 7 12-14"/></svg>
+          </div>
+          <h3>3. Trust Score out</h3>
+          <p>You get a Property Trust Score from 0 to 100 with a plain-English checklist.</p>
+        </li>
+      </ol>
     </div>
   </section>
 
