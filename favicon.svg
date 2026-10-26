@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="2 2 227 257" role="img" aria-label="Deedease">
   <style>
-    .shield { fill: #0f2d5a; }
+    .shield { fill: #1d4ed8; }
     .detail { stroke: #fff; }
     .chimney { fill: #fff; }
     @media (prefers-color-scheme: dark) {
       .shield { fill: #fff; }
-      .detail { stroke: #0f2d5a; }
-      .chimney { fill: #0f2d5a; }
+      .detail { stroke: #1d4ed8; }
+      .chimney { fill: #1d4ed8; }
     }
   </style>
   <path class="shield" d="M14 2H217Q229 2 229 14V145A113.5 113.5 0 0 1 2 145V14Q2 2 14 2Z"/>
