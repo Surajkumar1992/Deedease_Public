@@ -1,16 +1,17 @@
 name: Public Site Health Check
 
-# Light checks every 30 min (no Web3Forms quota used). A real form submission
-# through a browser runs twice a day (~60/month of the 250 Web3Forms quota).
-# Any scheduled failure opens an issue and emails the owner.
+# Light checks every 30 min (no Web3Forms quota used). Any scheduled failure
+# opens an issue and emails the owner.
+# The browser form test (manual only) cannot pass from GitHub-hosted runners on
+# the Web3Forms free plan: their datacenter IPs are blocked. Run it from a
+# normal network instead: node .github/scripts/form-e2e.mjs
 on:
   schedule:
     - cron: '*/30 * * * *'
-    - cron: '17 4,16 * * *'
   workflow_dispatch:
     inputs:
       run_form_test:
-        description: 'Also submit a REAL test form (uses 1 Web3Forms email)'
+        description: 'Also submit a REAL test form (uses 1 Web3Forms email; fails on GitHub runners on the free plan)'
         type: boolean
         default: false
 
@@ -76,7 +77,7 @@ jobs:
           echo "Web3Forms API reachable and access key accepted."
 
   form-e2e:
-    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.run_form_test) || github.event.schedule == '17 4,16 * * *' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_form_test }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
