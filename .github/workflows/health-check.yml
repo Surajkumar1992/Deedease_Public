@@ -1,11 +1,18 @@
 name: Public Site Health Check
 
-# Probes the live site and the Web3Forms backend (never submits a real form, so
-# no Web3Forms quota is used). On failure it opens an issue and emails the owner.
+# Light checks every 30 min (no Web3Forms quota used). A real form submission
+# through a browser runs twice a day (~60/month of the 250 Web3Forms quota).
+# Any scheduled failure opens an issue and emails the owner.
 on:
   schedule:
     - cron: '*/30 * * * *'
+    - cron: '17 4,16 * * *'
   workflow_dispatch:
+    inputs:
+      run_form_test:
+        description: 'Also submit a REAL test form (uses 1 Web3Forms email)'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -17,6 +24,7 @@ env:
 
 jobs:
   health:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.schedule == '*/30 * * * *' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -53,6 +61,12 @@ jobs:
             -H "Origin: $SITE_URL" -d "{\"access_key\":\"$key\"}")
           code=${resp##*$'\n'}; body=${resp%$'\n'*}
           echo "HTTP $code: $body"
+          # Free plan blocks server-side calls (GitHub runner IPs) with this 403.
+          # It still proves the API is up, but the key can't be validated from here.
+          if [ "$code" = "403" ] && echo "$body" | grep -qi 'method is not allowed'; then
+            echo "::warning::Web3Forms is reachable but blocks server-side calls; key not validated (format and endpoint checked only)."
+            exit 0
+          fi
           if [ "$code" -ge 500 ] || [ "$code" = "000" ] || [ "$code" = "403" ] || [ "$code" = "429" ]; then
             echo "::error::Web3Forms API unhealthy (HTTP $code)"; exit 1
           fi
@@ -61,9 +75,23 @@ jobs:
           fi
           echo "Web3Forms API reachable and access key accepted."
 
+  form-e2e:
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.run_form_test) || github.event.schedule == '17 4,16 * * *' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Playwright (uses the runner's Chrome)
+        run: npm install --no-save --no-package-lock playwright-core
+      - name: Submit waitlist form in a real browser
+        run: node .github/scripts/form-e2e.mjs
+
   notify:
-    needs: health
-    if: ${{ always() && needs.health.result == 'failure' && github.event_name == 'schedule' }}
+    needs: [health, form-e2e]
+    if: ${{ always() && (needs.health.result == 'failure' || needs.form-e2e.result == 'failure') && github.event_name == 'schedule' }}
     runs-on: ubuntu-latest
     steps:
       - name: Open or update incident issue
@@ -87,12 +115,12 @@ jobs:
         if: steps.issue.outputs.new == 'true'
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: smtp.gmail.com
+          server_address: smtp.titan.email
           server_port: 465
           secure: true
           username: ${{ secrets.ALERT_SMTP_USERNAME }}
           password: ${{ secrets.ALERT_SMTP_PASSWORD }}
-          from: Deedease Health Check <${{ secrets.ALERT_SMTP_USERNAME }}>
+          from: Deedease Health Check <support@deedease.com>
           to: suraj.subham@gmail.com
           subject: "ALERT: deedease.com site / form health check failed"
           body: |
